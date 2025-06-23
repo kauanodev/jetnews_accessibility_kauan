@@ -18,7 +18,6 @@ package com.example.jetnews.ui
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -43,6 +42,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.jetnews.R
@@ -83,16 +84,20 @@ fun AppDrawer(
 
 @Composable
 private fun JetNewsLogo(modifier: Modifier = Modifier) {
-    Row(modifier = modifier) {
+    Row(
+        modifier = modifier.semantics {
+            contentDescription = "Logotipo do JetNews"
+        }
+    ) {
         Image(
             painter = painterResource(R.drawable.ic_jetnews_logo),
-            contentDescription = null,
+            contentDescription = null, // descrito no parent
             colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
         )
         Spacer(Modifier.width(8.dp))
         Image(
             painter = painterResource(R.drawable.ic_jetnews_wordmark),
-            contentDescription = null,
+            contentDescription = null, // descrito no parent
             colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
         )
     }
@@ -107,25 +112,14 @@ private fun DrawerButton(
     modifier: Modifier = Modifier
 ) {
     val colors = MaterialTheme.colorScheme
-    val imageAlpha = if (isSelected) {
-        1f
-    } else {
-        0.6f
-    }
-    val textIconColor = if (isSelected) {
-        colors.primary
-    } else {
-        colors.onSurface.copy(alpha = 0.6f)
-    }
-    val backgroundColor = if (isSelected) {
-        colors.primary.copy(alpha = 0.12f)
-    } else {
-        Color.Transparent
-    }
+    val imageAlpha = if (isSelected) 1f else 0.6f
+    val textIconColor = if (isSelected) colors.primary else colors.onSurface.copy(alpha = 0.6f)
+    val backgroundColor = if (isSelected) colors.primary.copy(alpha = 0.12f) else Color.Transparent
 
     val surfaceModifier = modifier
         .padding(start = 8.dp, top = 8.dp, end = 8.dp)
         .fillMaxWidth()
+
     Surface(
         modifier = surfaceModifier,
         color = backgroundColor,
@@ -133,7 +127,11 @@ private fun DrawerButton(
     ) {
         TextButton(
             onClick = action,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .semantics {
+                    contentDescription = "Ir para $label"
+                }
         ) {
             Row(
                 horizontalArrangement = Arrangement.Start,
@@ -142,7 +140,7 @@ private fun DrawerButton(
             ) {
                 Image(
                     imageVector = icon,
-                    contentDescription = null,
+                    contentDescription = null, // já está no parent
                     colorFilter = ColorFilter.tint(textIconColor),
                     alpha = imageAlpha
                 )
