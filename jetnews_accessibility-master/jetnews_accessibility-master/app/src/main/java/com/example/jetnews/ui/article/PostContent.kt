@@ -50,6 +50,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.FirstBaseline
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.SpanStyle
@@ -118,9 +120,12 @@ private fun PostHeaderImage(post: Post) {
         .heightIn(min = 180.dp)
         .fillMaxWidth()
         .clip(shape = MaterialTheme.shapes.medium)
+        .semantics {
+            contentDescription = "Imagem do post: ${post.title}"
+        }
     Image(
         painter = painterResource(post.imageId),
-        contentDescription = null,
+        contentDescription = null, // acessibilidade movida para o modifier com semantics
         modifier = imageModifier,
         contentScale = ContentScale.Crop
     )
@@ -220,12 +225,10 @@ private fun BulletParagraph(
 ) {
     Row {
         with(LocalDensity.current) {
-            // this box is acting as a character, so it's sized with font scaling (sp)
             Box(
                 modifier = Modifier
                     .size(8.sp.toDp(), 8.sp.toDp())
                     .alignBy {
-                        // Add an alignment "baseline" 1sp below the bottom of the circle
                         9.sp.roundToPx()
                     }
                     .background(LocalContentColor.current, CircleShape),
